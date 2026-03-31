@@ -1,0 +1,27 @@
+const express = require('express');
+const cors = require('cors');
+const config = require('./config');
+const toolRegistry = require('./tools/registry');
+const chatRouter = require('./routes/chat');
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.use('/api/chat', chatRouter);
+
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', model: config.ai.model });
+});
+
+(async () => {
+  console.log('Initializing tool registry...');
+  await toolRegistry.initialize();
+
+  app.listen(config.server.port, () => {
+    console.log(`Server running on http://localhost:${config.server.port}`);
+    console.log(`AI Base URL: ${config.ai.baseUrl}`);
+    console.log(`AI Model:    ${config.ai.model}`);
+  });
+})();
