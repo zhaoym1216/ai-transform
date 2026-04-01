@@ -1,9 +1,9 @@
-const config = require('./config');
-const toolRegistry = require('./tools/registry');
-const toolsConfig = require('./tools/tools.config');
-const memoryStore = require('./tools/memory-store');
-const schedulePreauthStore = require('./tools/schedule-preauth-store');
-const { createConfirmation } = require('./tools/confirmation');
+const config = require('../config');
+const toolRegistry = require('../tools/registry');
+const toolsConfig = require('../tools/tools.config');
+const memoryStore = require('../memory/memory-store');
+const schedulePreauthStore = require('../schedule/schedule-preauth-store');
+const { createConfirmation } = require('../tools/confirmation');
 
 const RISK_LABELS = {
   confirm: '需要确认',

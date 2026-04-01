@@ -1,4 +1,4 @@
-const scheduleStore = require('../schedule-store');
+const scheduleStore = require('../../schedule/schedule-store');
 
 module.exports = {
   name: 'schedule_list',

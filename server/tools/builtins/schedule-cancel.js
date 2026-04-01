@@ -1,6 +1,6 @@
-const scheduleStore = require('../schedule-store');
-const { syncScheduleToMemory } = require('../schedule-memory-sync');
-const { logScheduleEvent } = require('../schedule-log');
+const scheduleStore = require('../../schedule/schedule-store');
+const { syncScheduleToMemory } = require('../../schedule/schedule-memory-sync');
+const { logScheduleEvent } = require('../../schedule/schedule-log');
 
 module.exports = {
   name: 'schedule_cancel',

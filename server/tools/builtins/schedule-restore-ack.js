@@ -1,7 +1,7 @@
-const scheduleState = require('../../schedule-state');
-const scheduleStore = require('../schedule-store');
-const { syncScheduleToMemory } = require('../schedule-memory-sync');
-const { logScheduleEvent } = require('../schedule-log');
+const scheduleState = require('../../schedule/state');
+const scheduleStore = require('../../schedule/schedule-store');
+const { syncScheduleToMemory } = require('../../schedule/schedule-memory-sync');
+const { logScheduleEvent } = require('../../schedule/schedule-log');
 
 module.exports = {
   name: 'schedule_restore_ack',
@@ -39,7 +39,7 @@ module.exports = {
     if (resume) {
       queueMicrotask(() => {
         try {
-          require('../../schedule-runner')
+          require('../../schedule/runner')
             .tick()
             .catch((e) => console.error('schedule tick after restore:', e));
         } catch (e) {

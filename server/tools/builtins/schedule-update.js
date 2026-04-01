@@ -1,11 +1,11 @@
-const scheduleStore = require('../schedule-store');
-const { syncScheduleToMemory } = require('../schedule-memory-sync');
-const { logScheduleEvent } = require('../schedule-log');
+const scheduleStore = require('../../schedule/schedule-store');
+const { syncScheduleToMemory } = require('../../schedule/schedule-memory-sync');
+const { logScheduleEvent } = require('../../schedule/schedule-log');
 
 function triggerScheduleTick() {
   queueMicrotask(() => {
     try {
-      require('../../schedule-runner')
+      require('../../schedule/runner')
         .tick()
         .catch((e) => console.error('schedule tick after update:', e));
     } catch (e) {
@@ -93,7 +93,7 @@ module.exports = {
     });
 
     if (row.enabled) {
-      require('../../schedule-state').resumeRunnerAfterUserMutation();
+      require('../../schedule/state').resumeRunnerAfterUserMutation();
       triggerScheduleTick();
     }
 

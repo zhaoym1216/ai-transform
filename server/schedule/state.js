@@ -1,4 +1,4 @@
-const scheduleStore = require('./tools/schedule-store');
+const scheduleStore = require('./schedule-store');
 
 let pendingScheduleRestore = false;
 let runnerPaused = false;

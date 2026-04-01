@@ -1,6 +1,6 @@
 const { Router } = require('express');
-const ReactAgent = require('../react-agent');
-const scheduleState = require('../schedule-state');
+const ReactAgent = require('../agent/react-agent');
+const scheduleState = require('../schedule/state');
 const { resolveConfirmation } = require('../tools/confirmation');
 
 const router = Router();

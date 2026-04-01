@@ -7,15 +7,24 @@
 ```
 ai-transform/
 ├── server/
-│   ├── index.js                # Express 入口，启动时初始化工具注册表
-│   ├── config.js               # 全局配置（baseUrl / apiKey / model）
-│   ├── react-agent.js          # ReAct 编排器（推理-行动循环）
+│   ├── index.js                # Express 入口
+│   ├── config/
+│   │   └── index.js            # 环境变量与 AI/端口配置
+│   ├── agent/
+│   │   └── react-agent.js      # ReAct 编排器（推理-行动循环）
+│   ├── schedule/               # 定时任务：状态、runner、持久化与日志
+│   ├── memory/
+│   │   └── memory-store.js     # 持久记忆文件存储
 │   ├── routes/
 │   │   └── chat.js             # SSE 流式接口
-│   └── tools/
-│       ├── tools.config.js     # 工具定义 + MCP 服务器配置
-│       ├── registry.js         # 工具注册表（内置 + MCP）
-│       └── mcp-client.js       # MCP 协议客户端
+│   ├── tools/
+│   │   ├── tools.config.js     # 工具列表 + MCP 配置
+│   │   ├── registry.js         # 工具注册表（内置 + MCP）
+│   │   ├── confirmation.js     # 需确认工具的前端确认
+│   │   ├── mcp-client.js       # MCP 客户端
+│   │   ├── safe-url.js         # fetch 网页安全校验
+│   │   └── builtins/           # 各内置工具实现
+│   └── data/                   # 运行时数据（记忆、日程等，勿提交敏感内容）
 ├── client/
 │   └── src/
 │       ├── App.jsx             # 主界面

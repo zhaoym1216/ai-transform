@@ -1,4 +1,4 @@
-const memoryStore = require('./memory-store');
+const memoryStore = require('../memory/memory-store');
 
 function formatScheduleSummary(schedule) {
   return [

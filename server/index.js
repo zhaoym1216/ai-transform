@@ -2,8 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const config = require('./config');
 const toolRegistry = require('./tools/registry');
-const scheduleRunner = require('./schedule-runner');
-const scheduleState = require('./schedule-state');
+const scheduleRunner = require('./schedule/runner');
+const scheduleState = require('./schedule/state');
 const chatRouter = require('./routes/chat');
 
 const app = express();

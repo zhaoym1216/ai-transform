@@ -9,7 +9,7 @@
  * - turnTimeout: 每轮超时时间
  */
 
-const memoryStore = require('./memory-store');
+const memoryStore = require('../memory/memory-store');
 
 const BASE_PROMPT = [
   '你是一个有用的 AI 助手，拥有工具调用能力。',

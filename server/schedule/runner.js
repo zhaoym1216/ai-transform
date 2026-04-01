@@ -1,7 +1,7 @@
-const ReactAgent = require('./react-agent');
-const scheduleStore = require('./tools/schedule-store');
-const scheduleState = require('./schedule-state');
-const { createScheduleLogger, logScheduleEvent } = require('./tools/schedule-log');
+const ReactAgent = require('../agent/react-agent');
+const scheduleStore = require('./schedule-store');
+const scheduleState = require('./state');
+const { createScheduleLogger, logScheduleEvent } = require('./schedule-log');
 
 let intervalId = null;
 let currentAbort = null;
