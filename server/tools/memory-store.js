@@ -127,4 +127,37 @@ function count() {
   return load().length;
 }
 
-module.exports = { load, save, add, update, remove, query, getByImportance, count };
+const SCHEDULE_TAG_PREFIX = 'schedule_id:';
+
+async function upsertScheduleSummary(scheduleId, content, importance = 'normal') {
+  const memories = load();
+  const tag = `${SCHEDULE_TAG_PREFIX}${scheduleId}`;
+  const idx = memories.findIndex((m) => m.tags && m.tags.includes(tag));
+  const now = new Date().toISOString();
+  if (idx >= 0) {
+    memories[idx].content = content;
+    memories[idx].category = 'schedule';
+    memories[idx].importance = importance;
+    memories[idx].updatedAt = now;
+    await save(memories);
+    return memories[idx];
+  }
+  return await add({
+    content,
+    importance,
+    category: 'schedule',
+    tags: [tag, 'schedule'],
+  });
+}
+
+module.exports = {
+  load,
+  save,
+  add,
+  update,
+  remove,
+  query,
+  getByImportance,
+  count,
+  upsertScheduleSummary,
+};

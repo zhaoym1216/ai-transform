@@ -74,9 +74,14 @@ function ToolCallBlock({ name, arguments: args, result, isError, riskLevel, conf
   );
 }
 
+const CONFIRM_TOOL_LABELS = {
+  schedule_sensitive_preauth: '定时任务 · 敏感工具预授权',
+};
+
 function ToolConfirmBlock({ confirmId, name, arguments: args, riskLevel, message, status, onConfirm }) {
   const isDangerous = riskLevel === 'dangerous';
   const isPending = status === 'pending';
+  const displayName = CONFIRM_TOOL_LABELS[name] || name;
 
   return (
     <div className={`tool-confirm-block ${isDangerous ? 'confirm-dangerous' : 'confirm-normal'}`}>
@@ -99,7 +104,7 @@ function ToolConfirmBlock({ confirmId, name, arguments: args, riskLevel, message
         <div className="confirm-text">
           <div className="confirm-title">{message}</div>
           <div className="confirm-tool-name">
-            工具：<code>{name}</code>
+            工具：<code>{displayName}</code>
           </div>
         </div>
       </div>

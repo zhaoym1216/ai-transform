@@ -15,7 +15,7 @@ module.exports = {
       },
       category: {
         type: 'string',
-        enum: ['preference', 'fact', 'instruction', 'note'],
+        enum: ['preference', 'fact', 'instruction', 'note', 'schedule'],
         description: '按分类筛选',
       },
       keyword: {

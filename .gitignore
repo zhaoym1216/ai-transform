@@ -4,3 +4,4 @@ dist/
 client/node_modules/
 client/dist/
 server/data/
+public/schedule-logs/

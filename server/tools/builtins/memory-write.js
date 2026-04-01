@@ -20,9 +20,9 @@ module.exports = {
       },
       category: {
         type: 'string',
-        enum: ['preference', 'fact', 'instruction', 'note'],
+        enum: ['preference', 'fact', 'instruction', 'note', 'schedule'],
         description:
-          '分类：preference=用户偏好, fact=事实信息, instruction=持久指令, note=一般笔记',
+          '分类：preference=用户偏好, fact=事实信息, instruction=持久指令, note=一般笔记, schedule=定时任务摘要',
       },
       tags: {
         type: 'array',

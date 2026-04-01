@@ -78,6 +78,10 @@ class ToolRegistry {
     return this.tools.get(name)?.riskLevel || 'normal';
   }
 
+  hasTool(name) {
+    return this.tools.has(name);
+  }
+
   async executeTool(name, args) {
     const tool = this.tools.get(name);
     if (!tool) throw new Error(`Unknown tool: ${name}`);

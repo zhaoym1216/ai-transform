@@ -21,6 +21,10 @@ const BASE_PROMPT = [
   '当你不确定用户的偏好或历史信息时，可以使用 memory_read 工具查询。',
   'core 级记忆用于最重要的持久指令和偏好，请谨慎使用，避免滥用。',
   'important 级用于重要上下文和关键事实，normal 和 low 级用于一般备忘和临时记录。',
+  '\n\n【定时任务】\n',
+  '使用 schedule_create / schedule_list / schedule_update / schedule_cancel 管理 Cron 定时任务。',
+  '若任务可能调用需确认或危险工具，须将工具名写入 preApprovedTools，并在对话中取得用户明确同意。',
+  '服务重启后若存在已启用任务，须等用户在对话中确认后调用 schedule_restore_ack 才能恢复调度。',
 ].join('');
 
 module.exports = {
@@ -49,6 +53,11 @@ module.exports = {
     require('./builtins/memory-write'),
     require('./builtins/memory-read'),
     require('./builtins/memory-delete'),
+    require('./builtins/schedule-create'),
+    require('./builtins/schedule-list'),
+    require('./builtins/schedule-update'),
+    require('./builtins/schedule-cancel'),
+    require('./builtins/schedule-restore-ack'),
   ],
 
   // ─── MCP 服务器配置 ──────────────────────────────────────────

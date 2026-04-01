@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const ReactAgent = require('../react-agent');
+const scheduleState = require('../schedule-state');
 const { resolveConfirmation } = require('../tools/confirmation');
 
 const router = Router();
@@ -33,8 +34,17 @@ router.post('/completions', async (req, res) => {
     signal: upstreamController.signal,
   });
 
+  const extraSystemMessages = [];
+  if (scheduleState.shouldInjectRestorePrompt()) {
+    extraSystemMessages.push({
+      role: 'system',
+      content: scheduleState.getRestorePromptContent(),
+    });
+    scheduleState.markRestorePromptInjected();
+  }
+
   try {
-    await agent.run(messages);
+    await agent.run(messages, { extraSystemMessages });
   } catch (err) {
     if (err.name === 'AbortError') return;
     console.error('ReAct agent error:', err);
