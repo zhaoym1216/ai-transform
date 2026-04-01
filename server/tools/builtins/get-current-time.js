@@ -1,5 +1,6 @@
 module.exports = {
   name: 'get_current_time',
+  riskLevel: 'normal',
   description: '获取当前日期和时间',
   parameters: {
     type: 'object',

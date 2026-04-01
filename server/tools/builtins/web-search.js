@@ -1,5 +1,6 @@
 module.exports = {
   name: 'web_search',
+  riskLevel: 'normal',
   description: '搜索互联网获取实时信息',
   parameters: {
     type: 'object',

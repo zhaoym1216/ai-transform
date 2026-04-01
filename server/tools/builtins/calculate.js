@@ -2,6 +2,7 @@ const { evaluate } = require('mathjs');
 
 module.exports = {
   name: 'calculate',
+  riskLevel: 'normal',
   description: '计算数学表达式，支持加减乘除、幂运算等',
   parameters: {
     type: 'object',

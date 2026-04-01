@@ -2,7 +2,8 @@
  * 连接后端 ReAct SSE 流
  *
  * 事件类型：
- *   step_start  / delta / step_end / tool_call / tool_result / error / done
+ *   step_start / delta / step_end / tool_call / tool_confirm_request /
+ *   tool_confirm_result / tool_result / error / done
  */
 export async function fetchReactStream(messages, { signal, onEvent, onDone, onError }) {
   try {
@@ -54,4 +55,17 @@ export async function fetchReactStream(messages, { signal, onEvent, onDone, onEr
       onError(err);
     }
   }
+}
+
+export async function confirmToolCall(confirmId, approved) {
+  const res = await fetch('/api/chat/confirm', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ confirmId, approved }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error(err.error || `HTTP ${res.status}`);
+  }
+  return res.json();
 }

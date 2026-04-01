@@ -2,6 +2,7 @@ const { assertSafeUrl } = require('../safe-url');
 
 module.exports = {
   name: 'fetch_webpage',
+  riskLevel: 'normal',
   description: '抓取指定 URL 的网页内容并返回文本（最多 5000 字符）',
   parameters: {
     type: 'object',

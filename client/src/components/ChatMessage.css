@@ -200,6 +200,198 @@
   color: var(--danger);
 }
 
+/* ── Tool waiting status ─────────────────────── */
+.tool-call-pending {
+  border-color: rgba(255, 193, 7, 0.4);
+}
+
+.tool-status.waiting {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.5; }
+}
+
+.tool-risk-badge {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.tool-risk-badge.risk-confirm {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.tool-risk-badge.risk-dangerous {
+  background: rgba(255, 107, 107, 0.15);
+  color: var(--danger);
+}
+
+/* ── Tool confirm block ──────────────────────── */
+.tool-confirm-block {
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 13px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.confirm-normal {
+  border: 1px solid rgba(255, 193, 7, 0.4);
+  background: rgba(255, 193, 7, 0.04);
+}
+
+.confirm-dangerous {
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  background: rgba(255, 107, 107, 0.04);
+}
+
+.confirm-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+.confirm-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.confirm-normal .confirm-icon {
+  color: #ffc107;
+}
+
+.confirm-dangerous .confirm-icon {
+  color: var(--danger);
+}
+
+.confirm-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.confirm-title {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.confirm-normal .confirm-title {
+  color: #ffc107;
+}
+
+.confirm-dangerous .confirm-title {
+  color: var(--danger);
+}
+
+.confirm-tool-name {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.confirm-tool-name code {
+  font-family: 'Fira Code', 'Menlo', monospace;
+  background: rgba(108, 99, 255, 0.12);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+  color: var(--accent);
+}
+
+.confirm-args {
+  padding: 8px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.confirm-args pre {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  font-family: 'Fira Code', 'Menlo', monospace;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.confirm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.confirm-btn-deny {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+}
+
+.confirm-btn-deny:hover {
+  background: rgba(255, 107, 107, 0.2);
+  color: var(--danger);
+}
+
+.confirm-btn-approve {
+  background: rgba(108, 99, 255, 0.2);
+  color: var(--accent);
+  margin-left: auto;
+}
+
+.confirm-btn-approve:hover {
+  background: rgba(108, 99, 255, 0.35);
+}
+
+.confirm-dangerous .confirm-btn-approve {
+  background: rgba(255, 107, 107, 0.15);
+  color: var(--danger);
+}
+
+.confirm-dangerous .confirm-btn-approve:hover {
+  background: rgba(255, 107, 107, 0.3);
+}
+
+.confirm-resolved {
+  padding: 8px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.resolved-approved {
+  color: #66bb6a;
+}
+
+.resolved-denied {
+  color: var(--danger);
+}
+
 /* ── Answer block (Markdown) ─────────────────── */
 .answer-block {
   padding: 12px 16px;

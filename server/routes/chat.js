@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const ReactAgent = require('../react-agent');
+const { resolveConfirmation } = require('../tools/confirmation');
 
 const router = Router();
 
@@ -41,6 +42,22 @@ router.post('/completions', async (req, res) => {
   }
 
   if (!res.writableFinished) res.end();
+});
+
+router.post('/confirm', (req, res) => {
+  const { confirmId, approved } = req.body;
+
+  if (!confirmId || typeof approved !== 'boolean') {
+    return res.status(400).json({ error: 'confirmId (string) and approved (boolean) are required' });
+  }
+
+  const found = resolveConfirmation(confirmId, approved);
+
+  if (!found) {
+    return res.status(404).json({ error: '确认请求不存在或已过期' });
+  }
+
+  res.json({ ok: true });
 });
 
 module.exports = router;

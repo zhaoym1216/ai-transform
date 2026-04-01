@@ -22,18 +22,38 @@ function ThinkingBlock({ content, round, defaultOpen }) {
   );
 }
 
-function ToolCallBlock({ name, arguments: args, result, isError }) {
+function ToolCallBlock({ name, arguments: args, result, isError, riskLevel, confirmStatus }) {
   const [expanded, setExpanded] = useState(false);
 
+  const needsConfirm = riskLevel && riskLevel !== 'normal';
+  const isPending = needsConfirm && confirmStatus === 'pending';
+  const isDenied = needsConfirm && confirmStatus === 'denied';
+
+  let statusText = result === null ? '执行中...' : isError ? '失败' : '完成';
+  let statusClass = result === null ? 'running' : isError ? 'error' : 'success';
+
+  if (isPending) {
+    statusText = '等待确认...';
+    statusClass = 'waiting';
+  } else if (isDenied) {
+    statusText = '已拒绝';
+    statusClass = 'error';
+  }
+
   return (
-    <div className="tool-call-block">
+    <div className={`tool-call-block ${isPending ? 'tool-call-pending' : ''}`}>
       <div className="tool-call-header" onClick={() => setExpanded(!expanded)}>
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
         </svg>
         <span className="tool-name">{name}</span>
-        <span className={`tool-status ${result === null ? 'running' : isError ? 'error' : 'success'}`}>
-          {result === null ? '执行中...' : isError ? '失败' : '完成'}
+        {needsConfirm && (
+          <span className={`tool-risk-badge risk-${riskLevel}`}>
+            {riskLevel === 'dangerous' ? '危险' : '需确认'}
+          </span>
+        )}
+        <span className={`tool-status ${statusClass}`}>
+          {statusText}
         </span>
       </div>
 
@@ -48,6 +68,68 @@ function ToolCallBlock({ name, arguments: args, result, isError }) {
         <div className={`tool-result ${isError ? 'tool-result-error' : ''}`}>
           <span className="tool-section-label">结果</span>
           <pre>{typeof result === 'string' ? result : JSON.stringify(result, null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ToolConfirmBlock({ confirmId, name, arguments: args, riskLevel, message, status, onConfirm }) {
+  const isDangerous = riskLevel === 'dangerous';
+  const isPending = status === 'pending';
+
+  return (
+    <div className={`tool-confirm-block ${isDangerous ? 'confirm-dangerous' : 'confirm-normal'}`}>
+      <div className="confirm-header">
+        <div className="confirm-icon">
+          {isDangerous ? (
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" strokeLinecap="round" strokeLinejoin="round" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          )}
+        </div>
+        <div className="confirm-text">
+          <div className="confirm-title">{message}</div>
+          <div className="confirm-tool-name">
+            工具：<code>{name}</code>
+          </div>
+        </div>
+      </div>
+
+      {args && Object.keys(args).length > 0 && (
+        <div className="confirm-args">
+          <span className="tool-section-label">执行参数</span>
+          <pre>{JSON.stringify(args, null, 2)}</pre>
+        </div>
+      )}
+
+      {isPending ? (
+        <div className="confirm-actions">
+          <button className="confirm-btn confirm-btn-deny" onClick={() => onConfirm(confirmId, false)}>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+            拒绝
+          </button>
+          <button className="confirm-btn confirm-btn-approve" onClick={() => onConfirm(confirmId, true)}>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            {isDangerous ? '我了解风险，确认执行' : '确认执行'}
+          </button>
+        </div>
+      ) : (
+        <div className={`confirm-resolved ${status === 'approved' ? 'resolved-approved' : 'resolved-denied'}`}>
+          {status === 'approved' ? '已批准执行' : '已拒绝执行'}
         </div>
       )}
     </div>
@@ -78,7 +160,7 @@ function AnswerBlock({ content, isStreaming }) {
   );
 }
 
-export default function ChatMessage({ message, isStreaming }) {
+export default function ChatMessage({ message, isStreaming, onConfirm }) {
   const { role } = message;
   const isUser = role === 'user';
 
@@ -123,6 +205,8 @@ export default function ChatMessage({ message, isStreaming }) {
               );
             case 'tool_call':
               return <ToolCallBlock key={i} {...part} />;
+            case 'tool_confirm':
+              return <ToolConfirmBlock key={i} {...part} onConfirm={onConfirm} />;
             case 'answer':
               return <AnswerBlock key={i} content={part.content} isStreaming={isStreaming && isLast} />;
             default:

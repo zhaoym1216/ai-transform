@@ -16,6 +16,7 @@ function getMailTransporter() {
 
 module.exports = {
   name: 'send_email',
+  riskLevel: 'confirm',
   description:
     '发送电子邮件。支持纯文本和 HTML 格式，可发送给多个收件人，可添加抄送和密送',
   parameters: {

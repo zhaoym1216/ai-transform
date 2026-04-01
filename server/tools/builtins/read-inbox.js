@@ -3,6 +3,7 @@ const { simpleParser } = require('mailparser');
 
 module.exports = {
   name: 'read_inbox',
+  riskLevel: 'confirm',
   description:
     '读取收件箱邮件列表。可指定读取数量和邮箱文件夹，返回发件人、主题、时间和正文摘要',
   parameters: {

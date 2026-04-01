@@ -1,16 +1,24 @@
 const config = require('./config');
 const toolRegistry = require('./tools/registry');
 const toolsConfig = require('./tools/tools.config');
+const { createConfirmation } = require('./tools/confirmation');
+
+const RISK_LABELS = {
+  confirm: '需要确认',
+  dangerous: '需要人工审批（危险操作）',
+};
 
 /**
  * SSE 事件协议：
- *   step_start  { round, maxRounds }
- *   delta       { content }            — LLM 流式输出（思考 or 回答）
- *   step_end    { round, hasToolCalls } — 标记本轮是否有工具调用
- *   tool_call   { id, name, arguments }
- *   tool_result { id, name, content, isError }
- *   error       { message }
- *   done        {}
+ *   step_start          { round, maxRounds }
+ *   delta               { content }
+ *   step_end            { round, hasToolCalls }
+ *   tool_call           { id, name, arguments, riskLevel }
+ *   tool_confirm_request { confirmId, toolCallId, name, arguments, riskLevel, message }
+ *   tool_confirm_result  { confirmId, toolCallId, approved }
+ *   tool_result         { id, name, content, isError }
+ *   error               { message }
+ *   done                {}
  */
 class ReactAgent {
   constructor({ writer, signal }) {
@@ -67,12 +75,26 @@ class ReactAgent {
           continue;
         }
 
+        const riskLevel = toolRegistry.getRiskLevel(tc.name);
+
         this.emit({
           type: 'tool_call',
           id: tc.id,
           name: tc.name,
           arguments: tc.arguments,
+          riskLevel,
         });
+
+        if (riskLevel !== 'normal') {
+          const approved = await this._waitForConfirmation(tc, riskLevel);
+          if (!approved) {
+            const denied = '用户拒绝执行该操作';
+            this.emit({ type: 'tool_result', id: tc.id, name: tc.name, content: denied, isError: true });
+            messages.push({ role: 'tool', tool_call_id: tc.id, content: denied });
+            totalToolCalls++;
+            continue;
+          }
+        }
 
         let content;
         let isError = false;
@@ -102,6 +124,29 @@ class ReactAgent {
     }
 
     this.emit({ type: 'done' });
+  }
+
+  async _waitForConfirmation(tc, riskLevel) {
+    const { id: confirmId, promise } = createConfirmation();
+
+    this.emit({
+      type: 'tool_confirm_request',
+      confirmId,
+      toolCallId: tc.id,
+      name: tc.name,
+      arguments: tc.arguments,
+      riskLevel,
+      message: RISK_LABELS[riskLevel] || '需要确认',
+    });
+
+    try {
+      const approved = await promise;
+      this.emit({ type: 'tool_confirm_result', confirmId, toolCallId: tc.id, approved });
+      return approved;
+    } catch {
+      this.emit({ type: 'tool_confirm_result', confirmId, toolCallId: tc.id, approved: false });
+      return false;
+    }
   }
 
   async _streamLLM(messages, tools, turnTimeout) {

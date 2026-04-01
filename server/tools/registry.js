@@ -1,6 +1,15 @@
 const McpClient = require('./mcp-client');
 const toolsConfig = require('./tools.config');
 
+const DANGEROUS_PATTERNS = /delete|remove|drop|destroy|kill|exec|shell|run_command/i;
+const CONFIRM_PATTERNS = /write|create|move|rename|edit|update|append|mkdir|copy|send|upload/i;
+
+function classifyMcpTool(name) {
+  if (DANGEROUS_PATTERNS.test(name)) return 'dangerous';
+  if (CONFIRM_PATTERNS.test(name)) return 'confirm';
+  return 'normal';
+}
+
 class ToolRegistry {
   constructor() {
     this.tools = new Map();
@@ -14,6 +23,7 @@ class ToolRegistry {
     for (const t of toolsConfig.tools) {
       this.tools.set(t.name, {
         type: 'builtin',
+        riskLevel: t.riskLevel || 'normal',
         definition: {
           type: 'function',
           function: {
@@ -37,6 +47,7 @@ class ToolRegistry {
           const fullName = `${name}__${mt.name}`;
           this.tools.set(fullName, {
             type: 'mcp',
+            riskLevel: classifyMcpTool(mt.name),
             mcpServer: name,
             mcpToolName: mt.name,
             definition: {
@@ -61,6 +72,10 @@ class ToolRegistry {
 
   getToolDefinitions() {
     return Array.from(this.tools.values()).map((t) => t.definition);
+  }
+
+  getRiskLevel(name) {
+    return this.tools.get(name)?.riskLevel || 'normal';
   }
 
   async executeTool(name, args) {

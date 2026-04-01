@@ -11,7 +11,7 @@
 
 module.exports = {
   maxRounds: 5,
-  maxTokens: 4096,
+  maxTokens: 10000,
   maxToolCalls: 10,
   turnTimeout: 30000,
 

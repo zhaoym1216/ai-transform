@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import ChatMessage from './components/ChatMessage';
 import ChatInput from './components/ChatInput';
-import { fetchReactStream } from './api';
+import { fetchReactStream, confirmToolCall } from './api';
 import './App.css';
 
 export default function App() {
@@ -30,6 +30,37 @@ export default function App() {
       return next;
     });
   };
+
+  const handleConfirm = useCallback(async (confirmId, approved) => {
+    setMessages((prev) => {
+      const next = [...prev];
+      for (let m = next.length - 1; m >= 0; m--) {
+        const msg = next[m];
+        if (msg.role !== 'assistant' || !msg.parts) continue;
+        const parts = [...msg.parts];
+        let found = false;
+        for (let i = 0; i < parts.length; i++) {
+          if (parts[i].type === 'tool_confirm' && parts[i].confirmId === confirmId) {
+            parts[i] = { ...parts[i], status: approved ? 'approved' : 'denied' };
+            found = true;
+            break;
+          }
+        }
+        if (found) {
+          next[m] = { ...msg, parts };
+          break;
+        }
+      }
+      return next;
+    });
+
+    try {
+      await confirmToolCall(confirmId, approved);
+    } catch (err) {
+      console.error('Confirm failed:', err);
+      setError(`确认操作失败: ${err.message}`);
+    }
+  }, []);
 
   const handleSend = async (text) => {
     if (streaming) return;
@@ -85,9 +116,50 @@ export default function App() {
                 id: event.id,
                 name: event.name,
                 arguments: event.arguments,
+                riskLevel: event.riskLevel || 'normal',
+                confirmStatus: null,
                 result: null,
                 isError: false,
               });
+            });
+            break;
+
+          case 'tool_confirm_request':
+            updateAssistant((parts) => {
+              for (let i = parts.length - 1; i >= 0; i--) {
+                if (parts[i].type === 'tool_call' && parts[i].id === event.toolCallId) {
+                  parts[i] = { ...parts[i], confirmStatus: 'pending' };
+                  break;
+                }
+              }
+              parts.push({
+                type: 'tool_confirm',
+                confirmId: event.confirmId,
+                toolCallId: event.toolCallId,
+                name: event.name,
+                arguments: event.arguments,
+                riskLevel: event.riskLevel,
+                message: event.message,
+                status: 'pending',
+              });
+            });
+            break;
+
+          case 'tool_confirm_result':
+            updateAssistant((parts) => {
+              for (let i = parts.length - 1; i >= 0; i--) {
+                if (parts[i].type === 'tool_confirm' && parts[i].confirmId === event.confirmId) {
+                  parts[i] = { ...parts[i], status: event.approved ? 'approved' : 'denied' };
+                  break;
+                }
+                if (parts[i].type === 'tool_call' && parts[i].id === event.toolCallId) {
+                  parts[i] = {
+                    ...parts[i],
+                    confirmStatus: event.approved ? 'approved' : 'denied',
+                  };
+                  break;
+                }
+              }
             });
             break;
 
@@ -95,7 +167,7 @@ export default function App() {
             updateAssistant((parts) => {
               for (let i = parts.length - 1; i >= 0; i--) {
                 if (parts[i].type === 'tool_call' && parts[i].id === event.id) {
-                  parts[i] = { ...parts[i], result: event.content, isError: event.isError };
+                  parts[i] = { ...parts[i], result: event.content, isError: event.isError, confirmStatus: null };
                   break;
                 }
               }
@@ -169,6 +241,7 @@ export default function App() {
                 key={i}
                 message={msg}
                 isStreaming={streaming && i === messages.length - 1 && msg.role === 'assistant'}
+                onConfirm={handleConfirm}
               />
             ))}
             {error && <div className="error-banner">{error}</div>}
