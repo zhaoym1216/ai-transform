@@ -9,18 +9,34 @@
  * - turnTimeout: 每轮超时时间
  */
 
+const memoryStore = require('./memory-store');
+
+const BASE_PROMPT = [
+  '你是一个有用的 AI 助手，拥有工具调用能力。',
+  '当你需要实时信息（如当前时间、网页内容）时，请使用提供的工具。',
+  '当你能直接回答时，无需调用工具。',
+  '请逐步思考并给出清晰的回答。',
+  '\n\n【记忆工具使用指引】\n',
+  '当用户表达偏好、要求你记住某事、或提供重要个人信息时，你应主动使用 memory_write 工具保存。',
+  '当你不确定用户的偏好或历史信息时，可以使用 memory_read 工具查询。',
+  'core 级记忆用于最重要的持久指令和偏好，请谨慎使用，避免滥用。',
+  'important 级用于重要上下文和关键事实，normal 和 low 级用于一般备忘和临时记录。',
+].join('');
+
 module.exports = {
   maxRounds: 5,
   maxTokens: 10000,
   maxToolCalls: 10,
   turnTimeout: 30000,
 
-  systemPrompt: [
-    '你是一个有用的 AI 助手，拥有工具调用能力。',
-    '当你需要实时信息（如当前时间、网页内容）时，请使用提供的工具。',
-    '当你能直接回答时，无需调用工具。',
-    '请逐步思考并给出清晰的回答。',
-  ].join(''),
+  async systemPrompt() {
+    const coreMemories = memoryStore.getByImportance('core');
+
+    if (coreMemories.length === 0) return BASE_PROMPT;
+
+    const memoryBlock = coreMemories.map((m) => `- ${m.content}`).join('\n');
+    return `${BASE_PROMPT}\n\n【核心记忆 - 请始终遵循】\n${memoryBlock}`;
+  },
 
   // ─── 内置工具 ───────────────────────────────────────────────
   tools: [
@@ -30,6 +46,9 @@ module.exports = {
     require('./builtins/web-search'),
     require('./builtins/send-email'),
     require('./builtins/read-inbox'),
+    require('./builtins/memory-write'),
+    require('./builtins/memory-read'),
+    require('./builtins/memory-delete'),
   ],
 
   // ─── MCP 服务器配置 ──────────────────────────────────────────

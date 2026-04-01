@@ -1,6 +1,7 @@
 const config = require('./config');
 const toolRegistry = require('./tools/registry');
 const toolsConfig = require('./tools/tools.config');
+const memoryStore = require('./tools/memory-store');
 const { createConfirmation } = require('./tools/confirmation');
 
 const RISK_LABELS = {
@@ -36,10 +37,21 @@ class ReactAgent {
     const turnTimeout = toolsConfig.turnTimeout || 30000;
     const toolDefs = toolRegistry.getToolDefinitions();
 
-    const messages = [
-      { role: 'system', content: toolsConfig.systemPrompt },
-      ...userMessages,
-    ];
+    const systemPrompt = await toolsConfig.systemPrompt();
+    const messages = [{ role: 'system', content: systemPrompt }];
+
+    const importantMemories = memoryStore.getByImportance('important');
+    if (importantMemories.length > 0) {
+      const memBlock = importantMemories
+        .map((m) => `- [${m.category || 'note'}] ${m.content}`)
+        .join('\n');
+      messages.push({
+        role: 'system',
+        content: `【重要记忆】以下是用户此前保存的重要信息，请在回答时参考：\n${memBlock}`,
+      });
+    }
+
+    messages.push(...userMessages);
 
     let answered = false;
     let totalToolCalls = 0;
