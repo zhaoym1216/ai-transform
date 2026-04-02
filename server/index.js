@@ -5,6 +5,7 @@ const toolRegistry = require('./tools/registry');
 const scheduleRunner = require('./schedule/runner');
 const scheduleState = require('./schedule/state');
 const chatRouter = require('./routes/chat');
+const publicSkillsLoader = require('./skills/public-skills-loader');
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.get('/api/health', (_req, res) => {
 (async () => {
   console.log('Initializing tool registry...');
   await toolRegistry.initialize();
+  await publicSkillsLoader.loadPublicSkillsAtStartup();
   scheduleState.initFromDisk();
 
   const server = app.listen(config.server.port, () => {

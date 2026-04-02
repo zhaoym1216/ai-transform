@@ -10,12 +10,14 @@
  */
 
 const memoryStore = require('../memory/memory-store');
+const publicSkills = require('../skills/public-skills-loader');
 
 const BASE_PROMPT = [
   '你是一个有用的 AI 助手，拥有工具调用能力。',
   '当你需要实时信息（如当前时间、网页内容）时，请使用提供的工具。',
   '当你能直接回答时，无需调用工具。',
   '请逐步思考并给出清晰的回答。',
+  '若系统提示中出现【公开 Skills】区块，其中为从 public/.skills 与 public/skills 自动加载的 SKILL.md，请在适用场景下遵循。',
   '\n\n【记忆工具使用指引】\n',
   '当用户表达偏好、要求你记住某事、或提供重要个人信息时，你应主动使用 memory_write 工具保存。',
   '当你不确定用户的偏好或历史信息时，可以使用 memory_read 工具查询。',
@@ -34,12 +36,16 @@ module.exports = {
   turnTimeout: 30000,
 
   async systemPrompt() {
+    let prompt = BASE_PROMPT;
+    const skillsBlock = publicSkills.getInjectedPrompt();
+    if (skillsBlock) prompt += `\n\n${skillsBlock}`;
+
     const coreMemories = memoryStore.getByImportance('core');
-
-    if (coreMemories.length === 0) return BASE_PROMPT;
-
-    const memoryBlock = coreMemories.map((m) => `- ${m.content}`).join('\n');
-    return `${BASE_PROMPT}\n\n【核心记忆 - 请始终遵循】\n${memoryBlock}`;
+    if (coreMemories.length > 0) {
+      const memoryBlock = coreMemories.map((m) => `- ${m.content}`).join('\n');
+      prompt += `\n\n【核心记忆 - 请始终遵循】\n${memoryBlock}`;
+    }
+    return prompt;
   },
 
   // ─── 内置工具 ───────────────────────────────────────────────
