@@ -1,3 +1,9 @@
+---
+name: charting
+description: 程序化生成图表与数据可视化（柱状图、折线图、饼图、散点图等）。
+inject: full
+---
+
 # Charting Skill
 
 Generate and manipulate charts and data visualizations programmatically.

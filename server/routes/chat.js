@@ -5,6 +5,10 @@ const { resolveConfirmation } = require('../tools/confirmation');
 
 const router = Router();
 
+router.get('/schedule-restore-status', (_req, res) => {
+  res.json(scheduleState.getScheduleRestoreStatus());
+});
+
 router.post('/completions', async (req, res) => {
   const { messages = [] } = req.body;
 
@@ -35,12 +39,19 @@ router.post('/completions', async (req, res) => {
   });
 
   const extraSystemMessages = [];
-  if (scheduleState.shouldInjectRestorePrompt()) {
-    extraSystemMessages.push({
-      role: 'system',
-      content: scheduleState.getRestorePromptContent(),
-    });
-    scheduleState.markRestorePromptInjected();
+  if (scheduleState.isPendingScheduleRestore()) {
+    if (scheduleState.shouldInjectFullRestoreDetail()) {
+      extraSystemMessages.push({
+        role: 'system',
+        content: scheduleState.getRestorePromptContent(),
+      });
+      scheduleState.markFullRestoreDetailInjected();
+    } else {
+      extraSystemMessages.push({
+        role: 'system',
+        content: scheduleState.getRestorePromptShortContent(),
+      });
+    }
   }
 
   try {

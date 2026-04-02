@@ -1,15 +1,35 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import ChatMessage from './components/ChatMessage';
 import ChatInput from './components/ChatInput';
-import { fetchReactStream, confirmToolCall } from './api';
+import { fetchReactStream, confirmToolCall, fetchScheduleRestoreStatus } from './api';
 import './App.css';
 
 export default function App() {
   const [messages, setMessages] = useState([]);
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState('');
+  const [scheduleRestore, setScheduleRestore] = useState({
+    pending: false,
+    enabledTaskCount: 0,
+    runnerPaused: false,
+  });
   const controllerRef = useRef(null);
   const bottomRef = useRef(null);
+
+  const refreshScheduleRestore = useCallback(async () => {
+    try {
+      const s = await fetchScheduleRestoreStatus();
+      setScheduleRestore(s);
+    } catch {
+      /* 后端未起或网络错误时忽略 */
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshScheduleRestore();
+    const t = setInterval(refreshScheduleRestore, 30_000);
+    return () => clearInterval(t);
+  }, [refreshScheduleRestore]);
 
   const scrollToBottom = useCallback(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -182,7 +202,10 @@ export default function App() {
             break;
         }
       },
-      onDone: () => setStreaming(false),
+      onDone: () => {
+        setStreaming(false);
+        refreshScheduleRestore();
+      },
       onError: (err) => {
         setError(err.message);
         setStreaming(false);
@@ -222,6 +245,19 @@ export default function App() {
           </button>
         )}
       </header>
+
+      {scheduleRestore.pending && (
+        <div className="schedule-restore-banner" role="status">
+          <span className="schedule-restore-banner__dot" aria-hidden />
+          <div className="schedule-restore-banner__text">
+            <strong>定时任务待确认</strong>
+            <span>
+              服务重启后已有 {scheduleRestore.enabledTaskCount} 个启用任务处于调度暂停。请在对话中说明是否恢复自动执行（助手将调用
+              schedule_restore_ack）。
+            </span>
+          </div>
+        </div>
+      )}
 
       <main className="chat-area">
         {messages.length === 0 ? (

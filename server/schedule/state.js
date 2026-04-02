@@ -2,10 +2,11 @@ const scheduleStore = require('./schedule-store');
 
 let pendingScheduleRestore = false;
 let runnerPaused = false;
-let restorePromptInjectedThisSession = false;
+/** 本会话是否已注入过「完整版」重启恢复说明（之后每轮仅注入短提醒） */
+let fullRestoreDetailInjectedThisSession = false;
 
 function initFromDisk() {
-  restorePromptInjectedThisSession = false;
+  fullRestoreDetailInjectedThisSession = false;
   if (scheduleStore.hasEnabled()) {
     pendingScheduleRestore = true;
     runnerPaused = true;
@@ -39,12 +40,32 @@ function getRestorePromptContent() {
   ].join('\n');
 }
 
-function shouldInjectRestorePrompt() {
-  return pendingScheduleRestore && !restorePromptInjectedThisSession;
+function getRestorePromptShortContent() {
+  const n = scheduleStore.list({ enabledOnly: true }).length;
+  return [
+    '【定时任务 — 短提醒】',
+    `当前仍有 ${n} 个已启用任务因服务重启处于「调度暂停」，须用户明确同意后才能恢复自动执行。`,
+    '若用户尚未表态：请说明须调用 schedule_restore_ack（resume=true 同意 / resume=false 拒绝）。',
+    '完整任务清单已在会话中较早的系统消息给出；用户也可查看页面顶栏提示。',
+  ].join('\n');
 }
 
-function markRestorePromptInjected() {
-  restorePromptInjectedThisSession = true;
+function shouldInjectFullRestoreDetail() {
+  return pendingScheduleRestore && !fullRestoreDetailInjectedThisSession;
+}
+
+function markFullRestoreDetailInjected() {
+  fullRestoreDetailInjectedThisSession = true;
+}
+
+/** 供前端轮询：是否待恢复调度 */
+function getScheduleRestoreStatus() {
+  const tasks = scheduleStore.list({ enabledOnly: true });
+  return {
+    pending: pendingScheduleRestore,
+    enabledTaskCount: tasks.length,
+    runnerPaused,
+  };
 }
 
 function acknowledgeRestore(resume) {
@@ -69,8 +90,10 @@ module.exports = {
   isRunnerPaused,
   isPendingScheduleRestore,
   getRestorePromptContent,
-  shouldInjectRestorePrompt,
-  markRestorePromptInjected,
+  getRestorePromptShortContent,
+  shouldInjectFullRestoreDetail,
+  markFullRestoreDetailInjected,
+  getScheduleRestoreStatus,
   acknowledgeRestore,
   resumeRunnerAfterUserMutation,
 };
