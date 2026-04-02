@@ -1,0 +1,19 @@
+{
+  "name": "charting-skill",
+  "version": "1.0.0",
+  "description": "Generate and manipulate charts and data visualizations programmatically",
+  "author": "starchild-ai-agent",
+  "license": "MIT",
+  "keywords": [
+    "charting",
+    "visualization",
+    "charts",
+    "graphs",
+    "data-visualization"
+  ],
+  "main": "index.js",
+  "files": [
+    "SKILL.md",
+    "index.js"
+  ]
+}

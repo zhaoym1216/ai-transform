@@ -64,6 +64,7 @@ module.exports = {
     require('./builtins/schedule-update'),
     require('./builtins/schedule-cancel'),
     require('./builtins/schedule-restore-ack'),
+    require('./builtins/exec-public'),
   ],
 
   // ─── MCP 服务器配置 ──────────────────────────────────────────
