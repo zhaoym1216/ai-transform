@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄金价格趋势图</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            padding: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px 25px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 5px;
+        }
+        .stat-value.positive {
+            color: #28a745;
+        }
+        .stat-value.negative {
+            color: #dc3545;
+        }
+        svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .legend {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📈 黄金价格趋势分析</h1>
+        <p style="text-align: center; color: #666; margin: 0 0 20px 0;">数据周期：2024年12月16日 - 2025年1月15日</p>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-label">当前价格</div>
+                <div class="stat-value">$2682.50</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">周期变化</div>
+                <div class="stat-value positive">
+                    +1.05%
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">最高价格</div>
+                <div class="stat-value">$2718.20</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">最低价格</div>
+                <div class="stat-value">$2632.10</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">平均价格</div>
+                <div class="stat-value">$2682.77</div>
+            </div>
+        </div>
+
+        <svg width="1000" height="500" style="border: 1px solid #ddd; border-radius: 5px;">
+            <!-- 背景网格 -->
+            <defs>
+                <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+                    <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#eee" stroke-width="0.5"/>
+                </pattern>
+            </defs>
+            <rect width="1000" height="500" fill="url(#grid)" />
+            
+            <!-- Y轴标签 -->
+            <text x="50" y="55" text-anchor="end" font-size="12" fill="#666">$2718</text>
+            <text x="50" y="455" text-anchor="end" font-size="12" fill="#666">$2632</text>
+            
+            <!-- Y轴 -->
+            <line x1="60" y1="60" x2="60" y2="440" stroke="#333" stroke-width="2"/>
+            
+            <!-- X轴 -->
+            <line x1="60" y1="440" x2="940" y2="440" stroke="#333" stroke-width="2"/>
+            
+            <!-- 网格线 -->
+            <line x1="60" y1="60" x2="940" y2="60" stroke="#eee" stroke-width="0.5" stroke-dasharray="5,5"/><line x1="60" y1="155" x2="940" y2="155" stroke="#eee" stroke-width="0.5" stroke-dasharray="5,5"/><line x1="60" y1="250" x2="940" y2="250" stroke="#eee" stroke-width="0.5" stroke-dasharray="5,5"/><line x1="60" y1="345" x2="940" y2="345" stroke="#eee" stroke-width="0.5" stroke-dasharray="5,5"/><line x1="60" y1="440" x2="940" y2="440" stroke="#eee" stroke-width="0.5" stroke-dasharray="5,5"/>
+            
+            <!-- 价格线 -->
+            <path d="M 60 341.13821138211335 L 106.3157894736842 271.40534262485346 L 152.6315789473684 205.64459930313603 L 198.94736842105263 233.44947735191536 L 245.26315789473682 293.03135888501646 L 291.57894736842104 440 L 337.89473684210526 411.31242740998835 L 384.2105263157895 353.05458768873274 L 430.52631578947364 262.5783972125422 L 476.84210526315786 203.43786295005825 L 523.1578947368421 124.87804878048706 L 569.4736842105264 60 L 615.7894736842105 94.42508710801275 L 662.1052631578948 158.8617886178847 L 708.421052631579 189.31475029035897 L 754.7368421052631 130.174216027873 L 801.0526315789473 71.47502903600423 L 847.3684210526316 104.13472706155636 L 893.6842105263157 161.95121951219483 L 940 217.56097560975547" fill="none" stroke="#667eea" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            
+            <!-- 填充区域 -->
+            <path d="M 60 341.13821138211335 L 106.3157894736842 271.40534262485346 L 152.6315789473684 205.64459930313603 L 198.94736842105263 233.44947735191536 L 245.26315789473682 293.03135888501646 L 291.57894736842104 440 L 337.89473684210526 411.31242740998835 L 384.2105263157895 353.05458768873274 L 430.52631578947364 262.5783972125422 L 476.84210526315786 203.43786295005825 L 523.1578947368421 124.87804878048706 L 569.4736842105264 60 L 615.7894736842105 94.42508710801275 L 662.1052631578948 158.8617886178847 L 708.421052631579 189.31475029035897 L 754.7368421052631 130.174216027873 L 801.0526315789473 71.47502903600423 L 847.3684210526316 104.13472706155636 L 893.6842105263157 161.95121951219483 L 940 217.56097560975547 L 940 440 L 60 440 Z" 
+                  fill="url(#gradient)" opacity="0.3"/>
+            
+            <!-- 渐变定义 -->
+            <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.5" />
+                    <stop offset="100%" style="stop-color:#667eea;stop-opacity:0.1" />
+                </linearGradient>
+            </defs>
+            
+            <!-- 数据点 -->
+            
+                <circle cx="60" cy="341.13821138211335" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="106.3157894736842" cy="271.40534262485346" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="152.6315789473684" cy="205.64459930313603" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="198.94736842105263" cy="233.44947735191536" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="245.26315789473682" cy="293.03135888501646" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="291.57894736842104" cy="440" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="337.89473684210526" cy="411.31242740998835" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="384.2105263157895" cy="353.05458768873274" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="430.52631578947364" cy="262.5783972125422" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="476.84210526315786" cy="203.43786295005825" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="523.1578947368421" cy="124.87804878048706" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="569.4736842105264" cy="60" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="615.7894736842105" cy="94.42508710801275" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="662.1052631578948" cy="158.8617886178847" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="708.421052631579" cy="189.31475029035897" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="754.7368421052631" cy="130.174216027873" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="801.0526315789473" cy="71.47502903600423" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="847.3684210526316" cy="104.13472706155636" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="893.6842105263157" cy="161.95121951219483" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+                <circle cx="940" cy="217.56097560975547" r="4" fill="#667eea" stroke="white" stroke-width="2"/>
+            
+            
+            <!-- X轴标签 -->
+            <text x="60" y="465" text-anchor="middle" font-size="12" fill="#666">2024-12-16</text><text x="523.1578947368421" y="465" text-anchor="middle" font-size="12" fill="#666">2025-01-02</text><text x="940" y="465" text-anchor="middle" font-size="12" fill="#666">2025-01-15</text>
+        </svg>
+        
+        <div class="legend">
+            <p>💡 数据来源：国际黄金现货价格（美元/盎司）| 图表生成时间：2026/4/2 17:22:56</p>
+        </div>
+    </div>
+</body>
+</html>
