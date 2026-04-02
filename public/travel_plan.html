@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哈哈哈的旅游计划</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+            background: linear-gradient(135deg, #B3E5FC 0%, #81D4FA 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4FC3F7 0%, #29B6F6 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .trip-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .info-card {
+            background: #E1F5FE;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #29B6F6;
+        }
+
+        .info-card h3 {
+            color: #0277BD;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .info-card p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #29B6F6;
+        }
+
+        .timeline-item {
+            margin-bottom: 30px;
+            margin-left: 80px;
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -60px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #29B6F6;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #29B6F6;
+        }
+
+        .timeline-item h3 {
+            color: #0277BD;
+            margin-bottom: 8px;
+            font-size: 1.2em;
+        }
+
+        .timeline-item p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 5px;
+        }
+
+        .day-badge {
+            display: inline-block;
+            background: #29B6F6;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-right: 10px;
+        }
+
+        .activities {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .activity-item {
+            padding: 8px 0;
+            color: #555;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item::before {
+            content: '✓';
+            color: #0277BD;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .budget-section {
+            background: #B3E5FC;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 40px;
+        }
+
+        .budget-section h2 {
+            color: #0277BD;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .budget-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .budget-table th {
+            background: #0277BD;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .budget-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .budget-table tr:hover {
+            background: #fff;
+        }
+
+        .budget-table .total {
+            font-weight: bold;
+            background: #81D4FA;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .timeline-item {
+                margin-left: 40px;
+            }
+
+            .timeline-item::before {
+                left: -30px;
+            }
+
+            .timeline::before {
+                left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 哈哈哈的旅游计划</h1>
+            <p>一段说走就走的精彩旅程</p>
+        </div>
+
+        <div class="content">
+            <!-- 基本信息 -->
+            <div class="trip-info">
+                <div class="info-card">
+                    <h3>📍 目的地</h3>
+                    <p>日本 · 京都、东京、富士山</p>
+                </div>
+                <div class="info-card">
+                    <h3>📅 出行时间</h3>
+                    <p>2024年4月15日 - 2024年4月22日</p>
+                </div>
+                <div class="info-card">
+                    <h3>⏱️ 行程天数</h3>
+                    <p>8天7晚</p>
+                </div>
+                <div class="info-card">
+                    <h3>👥 出行人数</h3>
+                    <p>2人</p>
+                </div>
+            </div>
+
+            <!-- 时间轴 -->
+            <h2 style="color: #0277BD; margin-bottom: 30px; font-size: 1.5em;">📌 每日行程</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <span class="day-badge">第1天</span>
+                    <h3>出发 → 东京</h3>
+                    <p>✈️ 上海浦东机场出发，乘坐ANA航班</p>
+                    <div class="activities">
+                        <div class="activity-item">上午：办理值机、安检</div>
+                        <div class="activity-item">下午：飞行中</div>
+                        <div class="activity-item">晚上：抵达成田机场，入住酒店休息</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <span class="day-badge">第2天</span>
+                    <h3>东京探索</h3>
+                    <p>🏯 体验繁华的日本首都</p>
+                    <div class="activities">
+                        <div class="activity-item">早上：浅草寺、雷门</div>
+                        <div class="activity-item">中午：尝试日式拉面和寿司</div>
+                        <div class="activity-item">下午：涩谷十字路口、原宿竹下通</div>
+                        <div class="activity-item">晚上：新宿夜景</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <span class="day-badge">第3天</span>
+                    <h3>东京 → 富士山</h3>
+                    <p>🗻 去看日本的象征</p>
+                    <div class="activities">
+                        <div class="activity-item">上午：迪士尼乐园（可选）</div>
+                        <div class="activity-item">下午：前往富士山五合目</div>
+                        <div class="activity-item">傍晚：山中湖温泉</div>
+                        <div class="activity-item">晚上：入住温泉酒店</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <span class="day-badge">第4-5天</span>
+                    <h3>京都古都之旅</h3>
+                    <p>🎋 感受日本传统文化</p>
+                    <div class="activities">
+                        <div class="activity-item">伏见稻荷大社（千鸟居）</div>
+                        <div class="activity-item">清水寺、二年坂三年坂</div>
+                        <div class="activity-item">金阁寺、銀阁寺</div>
+                        <div class="activity-item">伊万里烧陶艺体验</div>
+                        <div class="activity-item">岚山竹林散步</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <span class="day-badge">第6-7天</span>
+                    <h3>关西深度体验</h3>
+                    <p>🏮 探索历史文化</p>
+                    <div class="activities">
+                        <div class="activity-item">奈良公园与小鹿互动</div>
+                        <div class="activity-item">东大寺、奈良国立博物馆</div>
+                        <div class="activity-item">大阪城公园</div>
+                        <div class="activity-item">黑门市场美食街</div>
+                        <div class="activity-item">道顿堀购物</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <span class="day-badge">第8天</span>
+                    <h3>返回上海</h3>
+                    <p>✈️ 依依不舍地回家</p>
+                    <div class="activities">
+                        <div class="activity-item">上午：自由购物时间</div>
+                        <div class="activity-item">下午：前往机场</div>
+                        <div class="activity-item">晚上：乘坐航班返回</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 预算表 -->
+            <div class="budget-section">
+                <h2>💰 旅游预算明细</h2>
+                <table class="budget-table">
+                    <thead>
+                        <tr>
+                            <th>项目</th>
+                            <th>单价</th>
+                            <th>数量</th>
+                            <th>小计</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>往返机票</td>
+                            <td>¥3,500</td>
+                            <td>2人</td>
+                            <td>¥7,000</td>
+                        </tr>
+                        <tr>
+                            <td>酒店住宿 (7晚)</td>
+                            <td>¥600</td>
+                            <td>7晚</td>
+                            <td>¥4,200</td>
+                        </tr>
+                        <tr>
+                            <td>日本铁路周游券</td>
+                            <td>¥2,000</td>
+                            <td>2张</td>
+                            <td>¥4,000</td>
+                        </tr>
+                        <tr>
+                            <td>景点门票</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>¥1,500</td>
+                        </tr>
+                        <tr>
+                            <td>餐饮费用</td>
+                            <td>¥200/天</td>
+                            <td>8天</td>
+                            <td>¥1,600</td>
+                        </tr>
+                        <tr>
+                            <td>购物纪念品</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>¥2,000</td>
+                        </tr>
+                        <tr>
+                            <td>旅游保险</td>
+                            <td>¥100</td>
+                            <td>2人</td>
+                            <td>¥200</td>
+                        </tr>
+                        <tr class="total">
+                            <td colspan="3" style="text-align: right;">总计：</td>
+                            <td>¥20,500</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 提示信息 -->
+            <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; border-radius: 8px; margin-top: 30px;">
+                <h3 style="color: #856404; margin-bottom: 10px;">💡 出行提示</h3>
+                <ul style="color: #856404; padding-left: 20px; line-height: 1.8;">
+                    <li>提前办理日本签证（需要10-15个工作日）</li>
+                    <li>购买国际旅游保险</li>
+                    <li>兑换日币（建议现场ATM取现）</li>
+                    <li>下载谷歌翻译、Google地图等App</li>
+                    <li>4月是樱花季，酒店需提前预订</li>
+                    <li>携带转换插头（日本使用A型插头）</li>
+                    <li>购买SUICA卡或IC卡用于交通</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>✨ 祝你有一段美好的旅程 ✨</p>
+            <p>此页面由AI生成 | 最后更新：2024年4月</p>
+        </div>
+    </div>
+</body>
+</html>

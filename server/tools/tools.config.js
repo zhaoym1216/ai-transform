@@ -28,9 +28,9 @@ const BASE_PROMPT = [
 ].join('');
 
 module.exports = {
-  maxRounds: 5,
+  maxRounds: 10,
   maxTokens: 10000,
-  maxToolCalls: 10,
+  maxToolCalls: 20,
   turnTimeout: 30000,
 
   async systemPrompt() {

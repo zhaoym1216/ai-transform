@@ -241,7 +241,9 @@ class ReactAgent {
     if (!answered) {
       const extraRound = maxRounds + 1;
       this.emit({ type: 'step_start', round: extraRound, maxRounds });
-      await this._streamLLM(messages, [], turnTimeout);
+      // Bedrock（及若干 OpenAI 兼容网关）要求：messages 里已有 assistant.tool_calls / tool 轮次时，
+      // 请求体必须仍带 tools=，不能只发「无 tools」的 continuation，否则会 400。
+      await this._streamLLM(messages, toolDefs, turnTimeout, { toolChoice: 'none' });
       this.emit({ type: 'step_end', round: extraRound, hasToolCalls: false });
     }
 
@@ -310,14 +312,15 @@ class ReactAgent {
     }
   }
 
-  async _streamLLM(messages, tools, turnTimeout) {
+  async _streamLLM(messages, tools, turnTimeout, options = {}) {
+    const { toolChoice = 'auto' } = options;
     const url = `${config.ai.baseUrl}/chat/completions`;
     const maxTokens = toolsConfig.maxTokens || 4096;
 
     const body = { model: config.ai.model, messages, stream: true, max_tokens: maxTokens };
     if (tools.length > 0) {
       body.tools = tools;
-      body.tool_choice = 'auto';
+      body.tool_choice = toolChoice;
     }
 
     const timeoutController = new AbortController();
